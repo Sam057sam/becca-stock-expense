@@ -15,7 +15,7 @@ class CustomerController extends Controller
 
     public function create()
     {
-        return view('customers.create');
+        return view('customers.form');
     }
 
     public function store(Request $request)

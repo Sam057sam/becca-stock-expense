@@ -17,6 +17,9 @@ class RoleSeeder extends Seeder
                 'description' => 'Full access to all settings and data.',
                 'is_system' => true,
                 'is_default' => false,
+                'abilities' => [
+                    'dashboard', 'products', 'warehouses', 'units', 'customers', 'suppliers', 'company-settings', 'roles', 'users', 'reports'
+                ],
             ],
             [
                 'name' => 'manager',
@@ -24,6 +27,9 @@ class RoleSeeder extends Seeder
                 'description' => 'Can manage inventory, sales, and purchases.',
                 'is_system' => false,
                 'is_default' => false,
+                'abilities' => [
+                    'dashboard', 'products', 'customers', 'suppliers', 'warehouses', 'units', 'quotes', 'sales', 'purchases', 'expenses', 'reports', 'credentials'
+                ],
             ],
             [
                 'name' => 'staff',
@@ -31,6 +37,9 @@ class RoleSeeder extends Seeder
                 'description' => 'Standard access for day-to-day operations.',
                 'is_system' => false,
                 'is_default' => true,
+                'abilities' => [
+                    'dashboard', 'products', 'customers', 'suppliers', 'quotes', 'sales', 'expenses', 'credentials'
+                ],
             ],
         ];
 

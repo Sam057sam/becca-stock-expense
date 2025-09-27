@@ -18,6 +18,11 @@ class Role extends Model
         'description',
         'is_default',
         'is_system',
+        'abilities',
+    ];
+
+    protected $casts = [
+        'abilities' => 'array',
     ];
 
     /**

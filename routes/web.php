@@ -6,14 +6,18 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\WarehouseController;
 use App\Livewire\CompanySettingsForm;
+use App\Livewire\CustomersManager;
 use App\Livewire\Dashboard;
+use App\Livewire\ExpensesManager;
 use App\Livewire\ProductsManager;
+use App\Livewire\PurchasesManager;
+use App\Livewire\QuotesManager;
 use App\Livewire\RolesManager;
+use App\Livewire\SuppliersManager;
 use App\Livewire\UnitsManager;
 use App\Livewire\UsersManager;
 use App\Livewire\WarehousesManager;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CustomerController;
 
 Route::middleware('guest')->group(function () {
     Route::get('login', [AuthController::class, 'create'])->name('login');
@@ -31,6 +35,11 @@ Route::middleware('auth')->group(function () {
     Route::get('warehouses/export', [WarehouseController::class, 'export'])->name('warehouses.export');
 
     Route::get('units', UnitsManager::class)->name('units.index');
+    Route::get('suppliers', SuppliersManager::class)->name('suppliers.index');
+    Route::get('customers', CustomersManager::class)->name('customers.index');
+    Route::get('quotes', QuotesManager::class)->name('quotes.index');
+    Route::get('purchases', PurchasesManager::class)->name('purchases.index');
+    Route::get('expenses', ExpensesManager::class)->name('expenses.index');
     Route::get('units/export', [UnitController::class, 'export'])->name('units.export');
 
     Route::get('company-settings', CompanySettingsForm::class)->name('company-settings.edit');
@@ -44,6 +53,4 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthController::class, 'destroy'])->name('logout');
 
-    Route::resource('customers', CustomerController::class);
-    Route::get('customers/export', [CustomerController::class, 'export'])->name('customers.export');
 });

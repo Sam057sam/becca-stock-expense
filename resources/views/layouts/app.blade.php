@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     @php
@@ -69,17 +69,44 @@
                             </svg>
                             <span>Company</span>
                         </a>
-                        <a href="{{ route('customers.index') }}"
-                            @class([
-                                'flex items-center gap-3 px-4 py-2 text-sm rounded-lg',
-                                'text-slate-900 bg-slate-100 font-medium' => request()->routeIs('customers.*'),
-                                'text-slate-600 hover:text-slate-900 hover:bg-slate-50' => !request()->routeIs('customers.*'),
-                            ])>
-                            <svg class="flex-shrink-0 w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+
+                        <a wire:navigate href="{{ route('customers.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors {{ request()->routeIs('customers.*') ? 'bg-white/10 text-sky-200' : 'text-white/80 hover:bg-white/5 hover:text-sky-200' }}">
+                            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
                             </svg>
-                            Customers
+                            <span>Customers</span>
                         </a>
+
+                        <a wire:navigate href="{{ route('suppliers.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors {{ request()->routeIs('suppliers.*') ? 'bg-white/10 text-sky-200' : 'text-white/80 hover:bg-white/5 hover:text-sky-200' }}">
+                            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 7.5h18M3 12h12M3 16.5h8" />
+                            </svg>
+                            <span>Suppliers</span>
+                        </a>
+                        <a wire:navigate href="{{ route('quotes.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors {{ request()->routeIs('quotes.*') ? 'bg-white/10 text-sky-200' : 'text-white/80 hover:bg-white/5 hover:text-sky-200' }}">
+                            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.25h13.5a.75.75 0 01.75.75v12a.75.75 0 01-.75.75H5.25a.75.75 0 01-.75-.75v-12a.75.75 0 01.75-.75z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 8.25h7.5M8.25 12h4.5M8.25 15.75h3" />
+                            </svg>
+                            <span>Quotes</span>
+                        </a>
+                        <a wire:navigate href="{{ route('purchases.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors {{ request()->routeIs('purchases.*') ? 'bg-white/10 text-sky-200' : 'text-white/80 hover:bg-white/5 hover:text-sky-200' }}">
+                            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v12.75" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 12l4.5 4.5 4.5-4.5" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5h15" />
+                            </svg>
+                            <span>Purchases</span>
+                        </a>
+
+                        <a wire:navigate href="{{ route('expenses.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors {{ request()->routeIs('expenses.*') ? 'bg-white/10 text-sky-200' : 'text-white/80 hover:bg-white/5 hover:text-sky-200' }}">
+                            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 4.5h10.5a1.5 1.5 0 011.5 1.5v12.75l-3-2.25-3 2.25-3-2.25-3 2.25V6a1.5 1.5 0 011.5-1.5z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9h4.5M9.75 12h3" />
+                            </svg>
+                            <span>Expenses</span>
+                        </a>
+
                     </div>
                     @if (auth()->user()?->hasRole('admin'))
                         <div class="mt-4 space-y-1 border-t border-white/10 pt-4">
@@ -488,3 +515,12 @@
     @stack('scripts')
 </body>
 </html>
+
+
+
+
+
+
+
+
+

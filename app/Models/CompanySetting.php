@@ -36,4 +36,11 @@ class CompanySetting extends Model
         'paypal_client_id',
         'paypal_secret',
     ];
+
+    protected $casts = [
+        'razorpay_key' => 'encrypted',
+        'razorpay_secret' => 'encrypted',
+        'paypal_client_id' => 'encrypted',
+        'paypal_secret' => 'encrypted',
+    ];
 }

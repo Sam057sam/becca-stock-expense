@@ -148,21 +148,33 @@
                 <div class="space-y-4">
                     <div>
                         <label for="razorpay_key" class="text-sm font-semibold text-slate-600">Razorpay API Key</label>
-                        <input id="razorpay_key" wire:model.defer="form.razorpay_key" type="text" class="mt-1 w-full rounded-lg border-slate-200 text-sm focus:border-sky-400 focus:ring-sky-400">
+                        <input id="razorpay_key" wire:model.defer="form.razorpay_key" type="password" autocomplete="off" placeholder="Enter new Razorpay key" class="mt-1 w-full rounded-lg border-slate-200 text-sm focus:border-sky-400 focus:ring-sky-400">
+                        @if($hasStoredSecrets['razorpay_key'])
+                            <p class="mt-1 text-xs text-slate-400">A Razorpay key is stored securely. Leave this blank to keep the existing value.</p>
+                        @endif
                     </div>
                     <div>
                         <label for="razorpay_secret" class="text-sm font-semibold text-slate-600">Razorpay API Secret</label>
-                        <input id="razorpay_secret" wire:model.defer="form.razorpay_secret" type="text" class="mt-1 w-full rounded-lg border-slate-200 text-sm focus:border-sky-400 focus:ring-sky-400">
+                        <input id="razorpay_secret" wire:model.defer="form.razorpay_secret" type="password" autocomplete="off" placeholder="Enter new Razorpay secret" class="mt-1 w-full rounded-lg border-slate-200 text-sm focus:border-sky-400 focus:ring-sky-400">
+                        @if($hasStoredSecrets['razorpay_secret'])
+                            <p class="mt-1 text-xs text-slate-400">A Razorpay secret is stored securely. Leave this blank to keep the existing value.</p>
+                        @endif
                     </div>
                 </div>
                 <div class="space-y-4">
                     <div>
                         <label for="paypal_client_id" class="text-sm font-semibold text-slate-600">PayPal Client ID</label>
-                        <input id="paypal_client_id" wire:model.defer="form.paypal_client_id" type="text" class="mt-1 w-full rounded-lg border-slate-200 text-sm focus:border-sky-400 focus:ring-sky-400">
+                        <input id="paypal_client_id" wire:model.defer="form.paypal_client_id" type="password" autocomplete="off" placeholder="Enter new PayPal client ID" class="mt-1 w-full rounded-lg border-slate-200 text-sm focus:border-sky-400 focus:ring-sky-400">
+                        @if($hasStoredSecrets['paypal_client_id'])
+                            <p class="mt-1 text-xs text-slate-400">A PayPal client ID is stored securely. Leave this blank to keep the existing value.</p>
+                        @endif
                     </div>
                     <div>
                         <label for="paypal_secret" class="text-sm font-semibold text-slate-600">PayPal Secret</label>
-                        <input id="paypal_secret" wire:model.defer="form.paypal_secret" type="text" class="mt-1 w-full rounded-lg border-slate-200 text-sm focus:border-sky-400 focus:ring-sky-400">
+                        <input id="paypal_secret" wire:model.defer="form.paypal_secret" type="password" autocomplete="off" placeholder="Enter new PayPal secret" class="mt-1 w-full rounded-lg border-slate-200 text-sm focus:border-sky-400 focus:ring-sky-400">
+                        @if($hasStoredSecrets['paypal_secret'])
+                            <p class="mt-1 text-xs text-slate-400">A PayPal secret is stored securely. Leave this blank to keep the existing value.</p>
+                        @endif
                     </div>
                 </div>
             </div>

@@ -62,7 +62,56 @@ class RolesManager extends Component
             'dashboard', 'products', 'customers', 'suppliers', 'quotes', 'expenses', 'credentials',
         ],
     ];
+    public string $search = ';
+    public int $perPage = 10;
+    public bool $isEditing = false;
+    public ?int $editingId = null;
+    public ?int $confirmingDelete = null;
 
+    /**
+     * @var array<int, string>
+     */
+    public array $availableDisplayNames = [
+        'Administrator',
+        'Manager',
+        'Staff',
+    ];
+
+    /**
+     * @var array<string, string>
+     */
+    public array $availableAbilities = [
+        'dashboard' => 'Dashboard Overview',
+        'products' => 'Products & Catalogue',
+        'customers' => 'Customers',
+        'suppliers' => 'Suppliers',
+        'warehouses' => 'Warehouses',
+        'units' => 'Units of Measure',
+        'quotes' => 'Quotes',
+        'purchases' => 'Purchases',
+        'expenses' => 'Expenses',
+        'company-settings' => 'Company Settings',
+        'reports' => 'Reports & Analytics',
+        'users' => 'User Accounts',
+        'roles' => 'Roles & Permissions',
+        'settings' => 'System Settings',
+        'credentials' => 'Login & Credentials',
+    ];
+
+    /**
+     * @var array<string, array<int, string>>
+     */
+    protected array $presetAbilityMap = [
+        'Administrator' => [
+            'dashboard', 'products', 'customers', 'suppliers', 'warehouses', 'units', 'quotes', 'purchases', 'expenses', 'company-settings', 'reports', 'users', 'roles', 'settings', 'credentials',
+        ],
+        'Manager' => [
+            'dashboard', 'products', 'customers', 'suppliers', 'warehouses', 'units', 'quotes', 'purchases', 'expenses', 'reports', 'credentials',
+        ],
+        'Staff' => [
+            'dashboard', 'products', 'customers', 'suppliers', 'quotes', 'expenses', 'credentials',
+        ],
+    ];
     public string $labelPreset = '';
 
     /**
@@ -278,7 +327,3 @@ class RolesManager extends Component
         ]);
     }
 }
-
-
-
-

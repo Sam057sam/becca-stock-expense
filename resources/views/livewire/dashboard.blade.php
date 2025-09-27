@@ -48,7 +48,7 @@
                     <div class="flex items-center justify-between px-6 py-4">
                         <div>
                             <p class="text-sm font-semibold text-slate-800">{{ $product->name }}</p>
-                            <p class="text-xs text-slate-500">SKU {{ $product->sku }} · {{ $product->warehouse?->name ?? 'Unassigned' }}</p>
+                            <p class="text-xs text-slate-500">SKU {{ $product->sku }} &middot; {{ $product->warehouse?->name ?? 'Unassigned' }}</p>
                         </div>
                         <span class="inline-flex h-9 items-center rounded-full border border-rose-200 bg-rose-50 px-4 text-xs font-semibold text-rose-700">{{ $product->stock_quantity }} in stock</span>
                     </div>
@@ -73,7 +73,7 @@
                     <li class="flex items-center justify-between px-6 py-4">
                         <div>
                             <p class="text-sm font-semibold text-slate-800">{{ $product->name }}</p>
-                            <p class="text-xs text-slate-500">{{ $product->unit?->symbol ?? '--' }} · {{ $product->warehouse?->name ?? 'Unassigned' }}</p>
+                            <p class="text-xs text-slate-500">{{ $product->unit?->symbol ?? '--' }} &middot; {{ $product->warehouse?->name ?? 'Unassigned' }}</p>
                         </div>
                         <span class="text-xs font-semibold {{ $product->is_active ? 'text-emerald-600' : 'text-slate-400' }}">
                             {{ $product->is_active ? 'Active' : 'Inactive' }}

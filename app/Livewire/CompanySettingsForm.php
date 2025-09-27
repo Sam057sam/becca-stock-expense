@@ -23,6 +23,26 @@ class CompanySettingsForm extends Component
     public ?string $lastResolvedPincode = null;
 
     /**
+     * @var array<int, string>
+     */
+    protected array $sensitiveFields = [
+        'razorpay_key',
+        'razorpay_secret',
+        'paypal_client_id',
+        'paypal_secret',
+    ];
+
+    /**
+     * @var array<string, bool>
+     */
+    public array $hasStoredSecrets = [
+        'razorpay_key' => false,
+        'razorpay_secret' => false,
+        'paypal_client_id' => false,
+        'paypal_secret' => false,
+    ];
+
+    /**
      * @var array<string, mixed>
      */
     #[Locked]
@@ -93,7 +113,14 @@ class CompanySettingsForm extends Component
     protected function hydrateFormFromModel(): void
     {
         if ($this->companySetting) {
-            $this->form = array_merge($this->form, $this->companySetting->only(array_keys($this->form)));
+            $data = $this->companySetting->only(array_keys($this->form));
+
+            foreach ($this->sensitiveFields as $field) {
+                $this->hasStoredSecrets[$field] = ! empty($this->companySetting->{$field});
+                $data[$field] = '';
+            }
+
+            $this->form = array_merge($this->form, $data);
             $this->logoPreview = $this->companySetting->company_logo_path
                 ? asset('storage/' . $this->companySetting->company_logo_path)
                 : null;
@@ -103,30 +130,23 @@ class CompanySettingsForm extends Component
             $this->original = $this->form;
         } else {
             $this->form = array_map(fn () => '', $this->form);
-            $this->original = $this->form;
             $this->logoPreview = null;
             $this->faviconPreview = null;
+
+            foreach ($this->sensitiveFields as $field) {
+                $this->hasStoredSecrets[$field] = false;
+            }
+
+            $this->original = $this->form;
         }
     }
 
     public function resetToOriginal(): void
     {
-        $this->form = $this->original;
+        $this->hydrateFormFromModel();
         $this->companyLogo = null;
         $this->companyFavicon = null;
         $this->lastResolvedPincode = null;
-
-        if ($this->companySetting && $this->companySetting->company_logo_path) {
-            $this->logoPreview = asset('storage/' . $this->companySetting->company_logo_path);
-        } else {
-            $this->logoPreview = null;
-        }
-
-        if ($this->companySetting && $this->companySetting->company_favicon_path) {
-            $this->faviconPreview = asset('storage/' . $this->companySetting->company_favicon_path);
-        } else {
-            $this->faviconPreview = null;
-        }
     }
 
     public function updatedCompanyLogo(): void
@@ -184,35 +204,37 @@ class CompanySettingsForm extends Component
         $validated = $this->validate();
         $payload = Arr::map($validated['form'], fn ($value) => $value === '' ? null : $value);
 
+        foreach ($this->sensitiveFields as $field) {
+            if (array_key_exists($field, $payload) && $payload[$field] === null) {
+                unset($payload[$field]);
+            }
+        }
+
         if ($this->companyLogo) {
             $path = $this->companyLogo->store('company', 'public');
             $payload['company_logo_path'] = $path;
-            $this->logoPreview = asset('storage/' . $path);
         }
 
         if ($this->companyFavicon) {
             $faviconPath = $this->companyFavicon->store('company', 'public');
             $payload['company_favicon_path'] = $faviconPath;
-            $this->faviconPreview = asset('storage/' . $faviconPath);
         }
 
         $setting = $this->companySetting ?? new CompanySetting();
         $setting->fill($payload);
-        \App\Support\AppSettings::forget();
         $setting->save();
-
-        $this->logoPreview = $setting->company_logo_path ? asset('storage/' . $setting->company_logo_path) : null;
-        $this->faviconPreview = $setting->company_favicon_path ? asset('storage/' . $setting->company_favicon_path) : null;
-
-        $this->dispatch('company-settings-updated', name: $setting->company_name, logo: $this->logoPreview, favicon: $this->faviconPreview);
+        \App\Support\AppSettings::forget();
 
         $this->companySetting = $setting;
-        $this->original = $this->form;
+        $this->hydrateFormFromModel();
         $this->companyLogo = null;
         $this->companyFavicon = null;
 
+        $this->dispatch('company-settings-updated', name: $setting->company_name, logo: $this->logoPreview, favicon: $this->faviconPreview);
+
         $this->notify('Company settings updated successfully.');
     }
+
 
     public function render()
     {

@@ -6,19 +6,24 @@ use App\Models\Product;
 use App\Models\Unit;
 use App\Models\Warehouse;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
 class ProductsManager extends Component
 {
     use WithPagination;
+    use WithFileUploads;
 
     public string $search = '';
     public int $perPage = 10;
     public bool $isEditing = false;
     public ?int $editingId = null;
     public ?int $confirmingDelete = null;
+    public $imageUpload = null;
+    public ?string $imagePreview = null;
 
     /**
      * @var array<string, mixed>
@@ -26,6 +31,7 @@ class ProductsManager extends Component
     public array $form = [
         'name' => '',
         'sku' => '',
+        'hsn_code' => '',
         'description' => '',
         'unit_id' => null,
         'warehouse_id' => null,
@@ -38,6 +44,7 @@ class ProductsManager extends Component
     protected array $baseRules = [
         'form.name' => ['required', 'string', 'max:255'],
         'form.sku' => ['required', 'string', 'max:100'],
+        'form.hsn_code' => ['nullable', 'string', 'max:20'],
         'form.description' => ['nullable', 'string'],
         'form.unit_id' => ['nullable', 'exists:units,id'],
         'form.warehouse_id' => ['nullable', 'exists:warehouses,id'],
@@ -45,6 +52,7 @@ class ProductsManager extends Component
         'form.sale_price' => ['nullable', 'numeric', 'min:0'],
         'form.stock_quantity' => ['nullable', 'integer', 'min:0'],
         'form.is_active' => ['boolean'],
+        'imageUpload' => ['nullable', 'image', 'max:4096'],
     ];
 
     protected $listeners = [
@@ -71,6 +79,15 @@ class ProductsManager extends Component
         $this->resetPage();
     }
 
+    public function updatedImageUpload(): void
+    {
+        $this->validateOnly('imageUpload', ['imageUpload' => ['nullable', 'image', 'max:4096']]);
+
+        if ($this->imageUpload) {
+            $this->imagePreview = $this->imageUpload->temporaryUrl();
+        }
+    }
+
     public function create(): void
     {
         $this->resetForm();
@@ -85,6 +102,7 @@ class ProductsManager extends Component
         $this->form = [
             'name' => $product->name,
             'sku' => $product->sku,
+            'hsn_code' => $product->hsn_code,
             'description' => $product->description,
             'unit_id' => $product->unit_id,
             'warehouse_id' => $product->warehouse_id,
@@ -94,6 +112,8 @@ class ProductsManager extends Component
             'is_active' => (bool) $product->is_active,
         ];
 
+        $this->imagePreview = $product->image_path ? asset('storage/' . $product->image_path) : null;
+        $this->imageUpload = null;
         $this->isEditing = true;
         $this->editingId = $product->id;
     }
@@ -105,19 +125,36 @@ class ProductsManager extends Component
             ? 'unique:products,sku,' . $this->editingId
             : 'unique:products,sku';
 
-        $validated = $this->validate($rules)['form'];
-        $payload = Arr::map($validated, fn ($value) => $value === '' ? null : $value);
+        $validated = $this->validate($rules);
+        $form = $validated['form'];
+        $payload = Arr::map($form, fn ($value) => $value === '' ? null : $value);
 
-        if ($this->isEditing && $this->editingId) {
-            Product::findOrFail($this->editingId)->update($payload);
+        $product = $this->isEditing && $this->editingId
+            ? Product::findOrFail($this->editingId)
+            : null;
+
+        if ($this->imageUpload) {
+            if ($product && $product->image_path) {
+                Storage::disk('public')->delete($product->image_path);
+            }
+
+            $path = $this->imageUpload->store('products', 'public');
+            $payload['image_path'] = $path;
+            $this->imagePreview = asset('storage/' . $path);
+        }
+
+        if ($product) {
+            $product->update($payload);
             $message = 'Product updated successfully.';
         } else {
             $product = Product::create($payload);
             $this->editingId = $product->id;
             $this->isEditing = true;
+            $this->imagePreview = $product->image_path ? asset('storage/' . $product->image_path) : $this->imagePreview;
             $message = 'Product created successfully.';
         }
 
+        $this->imageUpload = null;
         $this->notify($message);
         $this->dispatch('refreshProducts');
     }
@@ -133,10 +170,16 @@ class ProductsManager extends Component
             return;
         }
 
-        Product::findOrFail($this->confirmingDelete)->delete();
+        $product = Product::findOrFail($this->confirmingDelete);
+
+        if ($product->image_path) {
+            Storage::disk('public')->delete($product->image_path);
+        }
+
+        $product->delete();
+
         $this->confirmingDelete = null;
         $this->create();
-
         $this->notify('Product deleted successfully.');
         $this->dispatch('refreshProducts');
     }
@@ -146,6 +189,7 @@ class ProductsManager extends Component
         $this->form = [
             'name' => '',
             'sku' => strtoupper(Str::random(6)),
+            'hsn_code' => '',
             'description' => '',
             'unit_id' => null,
             'warehouse_id' => null,
@@ -154,6 +198,9 @@ class ProductsManager extends Component
             'stock_quantity' => 0,
             'is_active' => true,
         ];
+
+        $this->imageUpload = null;
+        $this->imagePreview = null;
     }
 
     public function render()
@@ -163,6 +210,7 @@ class ProductsManager extends Component
                 $query->where(fn ($sub) => $sub
                     ->where('name', 'like', '%' . $this->search . '%')
                     ->orWhere('sku', 'like', '%' . $this->search . '%')
+                    ->orWhere('hsn_code', 'like', '%' . $this->search . '%')
                 );
             })
             ->latest()
